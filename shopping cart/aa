@@ -1,0 +1,184 @@
+// login.js
+// Sign In
+let email = document.querySelector("#email");
+let password = document.querySelector("#password");
+let btnSignIn = document.querySelector("#btn-sign-in");
+btnSignIn.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (email.value.trim() == "" || password.value == "") alert("file data");
+  else {
+    if (
+      email.value == localStorage.getItem("Email") &&
+      password.value == localStorage.getItem("Password")
+    )
+      setTimeout(() => {
+        window.location = "index.html";
+      }, 1500);
+    else alert("email or password is wrong");
+  }
+});
+///////////////////////////////////////////////////////
+//register
+// Sign Up
+let userName = document.querySelector("#username");
+let email = document.querySelector("#email");
+let password = document.querySelector("#password");
+let btnSignUp = document.querySelector("#btn-sign-up");
+btnSignUp.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (
+    userName.value.trim() == "" ||
+    email.value.trim() == "" ||
+    password.value == ""
+  )
+    alert("fill data");
+  else {
+    localStorage.setItem("UserName", userName.value);
+    localStorage.setItem("Email", email.value);
+    localStorage.setItem("Password", password.value);
+    setTimeout(() => {
+      window.location = "login.html";
+    }, 1500);
+  }
+});
+////////////////////////////////////////////////////////////
+
+//script
+let links = document.querySelector("nav .links");
+let userInfo = document.querySelector("nav #user-info");
+let userDom = document.querySelector("#user-info #user");
+let logOutBtn = document.querySelector("#user-info #logout");
+if (localStorage.getItem("UserName")) {
+  links.remove();
+  userInfo.style.display = "flex";
+  userDom.innerHTML = localStorage.getItem("UserName").toUpperCase();
+}
+logOutBtn.addEventListener("click", logout);
+function logout() {
+  localStorage.clear();
+  setTimeout(() => {
+    window.location = "register.html";
+  }, 1500);
+}
+// Define product //
+let productsDom = document.querySelector(".products");
+let product = [
+  {
+    id: 1,
+    title: "iPhone 13 Pro Max",
+    size: "768px",
+    imageUrl: "image/images.jpg",
+  },
+  {
+    id: 2,
+    title: "Laptop Asus TUF F15",
+    size: "1911px",
+    imageUrl: "image/laptop.jpg",
+  },
+  {
+    id: 3,
+    title: "Apple Watch SE",
+    size: "140px",
+    imageUrl: "image/appelse.jpg",
+  },
+  {
+    id: 4,
+    title: "HeadPhone Rtx200",
+    size: "Large",
+    imageUrl: "image/headphone.jpg",
+  },
+];
+function drowproductUI() {
+  let productUI = product.map((item) => {
+    return `
+    <div class="product">
+<div class="image">
+  <img src="${item.imageUrl}" alt="iphone 13 pro max">
+</div>
+<div class="product-info">
+  <h1> ${item.title}</h1>
+  <div class="desc">
+   <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, culpa!</p>
+   <span>size : ${item.size}</span>
+  </div>
+</div>
+<div class="add-to-cart">
+  <button class="add-to-cart-btn" onclick=addToCart(${item.id})>Add To Cart</button>
+  <i class="fa fa-heart"></i>
+</div>
+</div>`;
+  });
+  productsDom.innerHTML = productUI.join(" ");
+}
+drowproductUI();
+let shoppingCartDom=document.querySelector(".shopping-cart");
+let cartsProductMenu=document.querySelector(".carts-product ");
+let cartsProductDom=document.querySelector(".carts-product .product");
+let badge=document.querySelector(".badge")
+
+function addToCart(id){
+ let choseItem= product.find((item)=>{
+    return item.id==id;
+  })
+cartsProductDom.innerHTML+=`<p> ${choseItem.title} </p>`
+let cartsProductItem=document.querySelectorAll(".carts-product .product p");
+badge.innerHTML=cartsProductItem.length;
+badge.style.display="block"
+}
+function checkedSignIn(){
+  if(localStorage.getItem("UserName"))
+  console.log("ssss");
+  else
+  window.location="login.html"
+}
+shoppingCartDom.addEventListener('click',()=>{
+  if(cartsProductDom.innerHTML!="")
+  if(cartsProductMenu.style.display=="block")
+  cartsProductMenu.style.display="none"
+  else
+  cartsProductMenu.style.display="block"
+
+})
+/////////////////////////////////////////
+carts
+
+let insertProduct = document.querySelector(".home .products");
+let noProduct = document.querySelector(".home .no-product");
+function drowUiCartProduct(allproductItem=[]) {
+  if(JSON.parse(localStorage.getItem("ProductInCart")).length===0)
+    noProduct.style.display="block"
+  
+
+  let productItem=JSON.parse(localStorage.getItem("ProductInCart"))||allproductItem
+    let productUI = productItem.map((item) => {
+      return `
+          <div class="product">
+          <div class="image">
+            <img src="${item.imgUrl}" alt="${item.altImg}">
+          </div>
+          <div class="product-info">
+            <h1> ${item.title}</h1>
+            <div class="desc">
+             <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, culpa!</p>
+             <span>size : ${item.size}</span>
+             <p class="salary" >Salary : ${item.salary}</p>
+            </div>
+          </div>
+          <div class="add-to-cart">
+            <button class="add-to-cart-btn" onclick=RemoveFormCart(${item.id})>Remove Form Cart</button>
+          </div>
+          </div>`;
+    });
+    insertProduct.innerHTML = productUI.join("");
+  }
+  drowUiCartProduct();
+  function RemoveFormCart(id){
+let productInCart=localStorage.getItem("ProductInCart")
+if(productInCart){
+let items=JSON.parse(productInCart)
+let filtered=items.filter((item)=>item.id !==id)
+localStorage.setItem("ProductInCart",JSON.stringify(filtered))
+drowUiCartProduct(filtered);
+}
+
+  }
